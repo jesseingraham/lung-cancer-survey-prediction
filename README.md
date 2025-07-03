@@ -18,17 +18,17 @@ Patient surveys are a valuable tool for data collection, but lengthy or poorly d
 To determine the best approach, a comparative analysis was conducted between two distinct modeling pipelines:
 
 ### Pipeline 1: Modeling with SMOTE
-1. Data Splitting: The dataset was split into training, validation, and testing sets.
-2. Oversampling: The Synthetic Minority Over-sampling Technique (SMOTE) was applied only to the training data to create a balanced set for model training.
-3. Model Training & Feature Analysis: A `RandomForestClassifier` was trained on the balanced data. Permutation-based feature importance was then used to rank the predictive power of each survey question.
-4. Iterative Feature Removal: Based on the feature importance rankings, questions that did not positively contribute to model prediction were systematically removed, and the model was retrained at each step to find the optimal feature set that maximized performance.
+1. **Data Splitting:** The dataset was split into training, validation, and testing sets.
+2. **Oversampling:** The Synthetic Minority Over-sampling Technique (SMOTE) was applied only to the training data to create a balanced set for model training.
+3. **Model Training & Feature Analysis:** A `RandomForestClassifier` was trained on the balanced data. Permutation-based feature importance was then used to rank the predictive power of each survey question.
+4. **Iterative Feature Removal:** Based on the feature importance rankings, questions that did not positively contribute to model prediction were systematically removed, and the model was retrained at each step to find the optimal feature set that maximized performance.
 
 ### Pipeline 2: Baseline Modeling (Without SMOTE)
-1. Data Splitting: The same initial data split was used.
-2. Model Training & Feature Analysis: A `RandomForestClassifier` was trained on the original, imbalanced training data. Permutation-based feature importance was performed.
-3. Iterative Feature Removal: The same iterative feature removal process was followed to find the optimal feature set for the model trained on the imbalanced data.
+1. **Data Splitting:** The same data splitting process as Pipeline 1 was repeated.
+2. **Model Training & Feature Analysis:** A `RandomForestClassifier` was trained on the original, imbalanced training data. Permutation-based feature importance was performed.
+3. **Iterative Feature Removal:** The same iterative feature removal process was followed to find the optimal feature set for the model trained on the imbalanced data.
 
-Finally, the best-performing model from each pipeline were retrained on all non-test data and scored using the held-out test set to determine the superior overall strategy.
+Finally, the best-performing model from each pipeline were retrained on all non-test data and scored using the test set to determine the superior overall strategy.
 
 ## Results & Analysis
 ### 1. Final Model Performance Comparison
@@ -44,11 +44,9 @@ The final tuned models from both pipelines were evaluated on the unseen test set
 ### 2. Impact of Feature Removal on Model Scores
 For both pipelines, iteratively removing the non-contributing features resulted in either a more accurate model or one that was about the same. The plots below show how model performance changed as features were removed in each pipeline.
 
-### Performance Curve for SMOTE Pipeline
-![Model Performance with SMOTE during Feature Selection](images/model_performance_with_smote_during_feature_selection.png)
-
-### Performance Curve for Baseline Pipeline
-![Model Performance without SMOTE during Feature Selection](images/model_performance_without_smote_during_feature_selection.png)
+| SMOTE Pipeline | Baseline Pipeline |
+| -------------- | ------------------|
+| ![Model Performance with SMOTE during Feature Selection](images/model_performance_with_smote_during_feature_selection.png) | ![Model Performance without SMOTE during Feature Selection](images/model_performance_without_smote_during_feature_selection.png) |
 
 ### Key Findings
 * The pipeline utilizing the SMOTE technique ultimately produced a more robust model, with greater Precision (0.9545) and a slightly higher F1-Score (0.9492).
@@ -56,6 +54,6 @@ For both pipelines, iteratively removing the non-contributing features resulted 
 * The baseline model (no SMOTE) suggested that an additional feature did not contribute to model scoring: `AGE`. However, in the pipeline that incorporated SMOTE, `AGE` did positively improve model scoring.
 
 ## Conclusion & Recommendation
-The comparative analysis demonstrates that using SMOTE to address class imbalance was the superior strategy for this particular problem. This was due to the model that used SMOTE having greater precision as well as a higher F1-Score, proving superiority in predicting both positive and negative classes. The model trained with using SMOTE may have had a higher True Positive Rate (the majority class), but the model lacked performance when it came to its True Negative Rate. This problem would shine when predicting classes for a set of survey responses where there was a majority of negative lung cancer cases.
+The comparative analysis demonstrates that using SMOTE to address class imbalance was the superior strategy for this particular problem. This was due to the model that used SMOTE having greater precision as well as a higher F1-Score, proving superiority in predicting both positive and negative classes. The baseline model (no SMOTE) may have had a higher True Positive Rate (the majority class), but the model lacked performance when it came to its True Negative Rate. This problem would shine when predicting classes for a set of survey responses where there was a majority of negative lung cancer cases, as the model learned to favor the positive class.
 
 Recommendation: Based on the findings from the more effective pipeline, it is recommended that the 3 identified non-essential questions be removed from the patient survey: `GENDER`, `CHEST_PAIN`, and `SMOKING`. This action could shorten the survey, reduce survey fatigue, and potentially improve the quality of responses for the remaining, more impactful questions.
